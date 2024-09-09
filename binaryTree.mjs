@@ -23,14 +23,14 @@ export class BinaryTree {
         let node = this.root;
         while (true) {
             if (newNode.value > node.value) {
-                if (newNode.right === null) {
+                if (node.right === null) {
                     node.right = newNode;
                     break
                 } else {
                     node = node.right;
                 }
             } else {
-                if (newNode.left === null) {
+                if (node.left === null) {
                     node.left = newNode;
                     break
                 } else {
@@ -38,9 +38,6 @@ export class BinaryTree {
                 }
             }
         }
-    }
-    deleteItem(value){
-
     }
     find(value){
         let node = this.root;
@@ -54,6 +51,93 @@ export class BinaryTree {
             }
         }
         return null
+    }
+    levelOrder(callback){
+        let queue = [];
+        queue.push(this.root);
+        while (queue.length !== 0) {
+            let node = queue.shift();
+            if (node.left) {
+                queue.push(node.left);
+            }
+            if (node.right) {
+                queue.push(node.right);
+            }
+            callback(node);
+        }
+    }
+    inOrder(callback, node){
+        if (!node) {
+            return
+        }
+        callback(node);
+        this.inOrder(callback, node.left);
+        this.inOrder(callback, node.right);
+    }
+    preOrder(callback, node){
+        if (!node) {
+            return
+        }
+        this.preOrder(callback, node.left);
+        callback(node);
+        this.preOrder(callback, node.right);
+    }
+    postOrder(callback, node){
+        if (!node) {
+            return
+        }
+        this.postOrder(callback, node.left);
+        this.postOrder(callback, node.right);
+        callback(node);
+    }
+    height(node){
+        if (!node) {
+            return 0
+        }
+        let left = this.height(node.left);
+        let right = this.height(node.right);
+        if (left > right) {
+            return left +1
+        } else {
+            return right + 1
+        }
+    }
+    depth(value){
+        let node = this.root;
+        let counter = 0;
+        while (node !== null) {
+            if (node.value === value) {
+                return counter
+            } else if (value > node.value) {
+                node = node.right;
+                counter++;
+            } else {
+                node = node.left;
+                counter++;
+            }
+        }
+        return null
+    }
+    isBalanced(){
+        return this.balanceChecker(this.root); 
+    }
+    rebalance(){
+        let arr = [];
+        this.preOrder((node) =>{arr.push(node.value)},
+        this.root);
+        console.log(arr);
+        this.buildTree(arr);
+    }
+    balanceChecker(node) {
+        if (node === null) {
+            return true
+        }
+        let left = this.height(node.left);
+        let right = this.height(node.right);
+        if ((Math.abs(left - right) !== 1) && (Math.abs(left - right) !== 0)) {
+            return false
+        }
+        return (this.balanceChecker(node.left) && this.balanceChecker(node.right))
     }
 }
 
